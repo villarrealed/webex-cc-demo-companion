@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cisco Webex Contact Center Deep Dive companion page for Farmers Insurance, June 2026.">
+  <title>Webex Contact Center Deep Dive — Farmers Insurance — June 2026</title>
+  <style>
+    :root {
+      --sidebar-width: 240px;
+      --cisco-blue: #3070E7;
+      --cisco-navy: #07182D;
+      --cisco-teal: #16BDEB;
+      --cisco-dark-blue: #0F1729;
+      --ink: #10243d;
+      --ink-soft: #4f627a;
+      --surface: #ffffff;
+      --surface-soft: #f6f9fc;
+      --line: #d9e4f0;
+      --line-strong: #9cb5d3;
+      --shadow: 0 18px 40px rgba(7, 24, 45, 0.08);
+      --shadow-soft: 0 8px 22px rgba(7, 24, 45, 0.06);
+      --radius: 18px;
+      --max-width: 1180px;
+      --font: 'CiscoSans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--surface);
+      color: var(--ink);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    a {
+      color: var(--cisco-blue);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    a:focus-visible {
+      outline: 3px solid var(--cisco-teal);
+      outline-offset: 3px;
+      border-radius: 6px;
+    }
+
+    .container {
+      width: min(100%, var(--max-width));
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    .content-shell {
+      min-height: 100vh;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      margin-bottom: 14px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cisco-blue);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.4vw, 3rem);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      color: var(--cisco-navy);
+      margin-bottom: 14px;
+    }
+
+    .section-intro {
+      max-width: 760px;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      margin-bottom: 34px;
+    }
+
+    .section-shell {
+      padding: 84px 0;
+      scroll-margin-top: 32px;
+    }
+
+    .section-shell.alt {
+      background:
+        linear-gradient(180deg, rgba(48, 112, 231, 0.03), rgba(22, 189, 235, 0.03)),
+        var(--surface-soft);
+    }
+
+    .sidebar {
+      display: none;
+    }
+
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid rgba(7, 24, 45, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .top-nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 28px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .wordmark {
+      font-family: var(--font);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--cisco-blue);
+      letter-spacing: -0.04em;
+      text-transform: lowercase;
+      white-space: nowrap;
+    }
+
+    .wordmark:hover { text-decoration: none; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      color: var(--ink);
+      font-size: 0.94rem;
+      font-weight: 600;
+      transition: background-color 180ms ease, color 180ms ease;
+    }
+
+    .nav-link:hover,
+    .nav-link:focus-visible {
+      background: rgba(48, 112, 231, 0.08);
+      color: var(--cisco-blue);
+      text-decoration: none;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 86% 16%, rgba(22, 189, 235, 0.18), transparent 28%),
+        radial-gradient(circle at 8% 88%, rgba(48, 112, 231, 0.24), transparent 34%),
+        linear-gradient(135deg, var(--cisco-navy) 0%, var(--cisco-dark-blue) 62%, #123666 100%);
+      color: #fff;
+      padding: 28px 0 26px;
+    }
+
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      max-width: 880px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(0.85rem, 1.1vw, 0.98rem);
+      color: #c9dcf3;
+      margin: 0;
+    }
+
+    .hero-presenter {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 8px;
+    }
+
+    .hero-caption {
+      max-width: 700px;
+      color: #bdd2ee;
+      font-size: 0.85rem;
+    }
+
+    .hero-accent-line {
+      width: min(120px, 32vw);
+      height: 3px;
+      margin: 30px 0 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--cisco-teal), rgba(255, 255, 255, 0.75));
+    }
+
+    .card-grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .two-up {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card h3 {
+      font-size: 1.45rem;
+      line-height: 1.18;
+      letter-spacing: -0.03em;
+      color: var(--cisco-navy);
+      margin-bottom: 14px;
+    }
+
+    .card p,
+    .card li {
+      color: var(--ink-soft);
+      font-size: 0.98rem;
+    }
+
+    .card ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .card li {
+      position: relative;
+      padding-left: 18px;
+    }
+
+    .card li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cisco-blue);
+    }
+
+    .agenda-card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .agenda-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cisco-blue), var(--cisco-teal));
+    }
+
+    .agenda-steps {
+      list-style: none;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0 0 20px;
+      padding: 0;
+    }
+
+    .agenda-steps li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .agenda-steps li.active {
+      background: linear-gradient(135deg, rgba(48, 112, 231, 0.06), rgba(22, 189, 235, 0.08));
+      border-color: rgba(48, 112, 231, 0.35);
+    }
+
+    .agenda-step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--cisco-blue), var(--cisco-teal));
+      color: #ffffff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .agenda-step-text {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--cisco-navy);
+      line-height: 1.2;
+    }
+
+    .agenda-subgrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .agenda-subcard {
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .agenda-subcard .card-kicker {
+      margin-bottom: 10px;
+    }
+
+    .agenda-subcard ul {
+      list-style: none;
+      display: grid;
+      gap: 6px;
+    }
+
+    .agenda-subcard li {
+      position: relative;
+      padding-left: 16px;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+      line-height: 1.4;
+    }
+
+    .agenda-subcard li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cisco-blue);
+    }
+
+    @media (max-width: 760px) {
+      .agenda-steps {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .agenda-subgrid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-kicker {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(48, 112, 231, 0.08);
+      color: var(--cisco-blue);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .story-card {
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, rgba(48, 112, 231, 0.03), rgba(255, 255, 255, 0)),
+        var(--surface);
+    }
+
+    .story-card.autonomous {
+      border-left: 4px solid var(--cisco-blue);
+    }
+
+    .story-card.assist {
+      border-left: 4px solid var(--cisco-teal);
+    }
+
+    .architecture-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .architecture-item {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 100%;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .architecture-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: fit-content;
+      min-width: 44px;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(48, 112, 231, 0.12), rgba(22, 189, 235, 0.12));
+      color: var(--cisco-blue);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .architecture-item h3 {
+      font-size: 1.15rem;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--cisco-navy);
+    }
+
+    .architecture-item p {
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+    }
+
+    .embed-wrap {
+      padding: 28px;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(48, 112, 231, 0.03), rgba(22, 189, 235, 0.05));
+      border: 1px solid rgba(48, 112, 231, 0.1);
+    }
+
+    .slido-wrap {
+      padding: 12px;
+      background: #ffffff;
+    }
+
+    .slido-wrap iframe {
+      display: block;
+      width: 100%;
+      min-height: 640px;
+      height: 70vh;
+      border: 0;
+      border-radius: 12px;
+    }
+
+    .slido-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+      padding: 14px 18px;
+      border: 1px solid rgba(48, 112, 231, 0.18);
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(48, 112, 231, 0.06), rgba(22, 189, 235, 0.06));
+    }
+
+    .slido-meta-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cisco-blue);
+    }
+
+    .slido-passcode {
+      font-family: 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--cisco-navy);
+      background: #ffffff;
+      border: 1px solid rgba(7, 24, 45, 0.16);
+      border-radius: 8px;
+      padding: 6px 12px;
+    }
+
+    .slido-meta-hint {
+      flex: 1 1 220px;
+      min-width: 0;
+      color: var(--ink-soft);
+      font-size: 0.92rem;
+    }
+
+    .embed-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      padding: 28px;
+      border: 2px dashed var(--line-strong);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.8);
+      text-align: center;
+      color: var(--ink-soft);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+    }
+
+    .embed-placeholder p {
+      max-width: 460px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .appendix-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    /* WebexOne banner — full-width, WebexOne brand palette */
+    .webexone-banner {
+      display: block;
+      margin: 28px 0 32px 0;
+      padding: 0;
+      border-radius: 18px;
+      background: linear-gradient(120deg, #0B0F2D 0%, #1A1F4A 45%, #4A1B6E 80%, #C8377A 100%);
+      color: #fff;
+      text-decoration: none;
+      box-shadow: 0 14px 40px -18px rgba(11, 15, 45, 0.55);
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .webexone-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 92% 0%, rgba(0, 224, 224, 0.22), transparent 45%),
+        radial-gradient(circle at 0% 100%, rgba(255, 90, 160, 0.18), transparent 50%);
+      pointer-events: none;
+    }
+    .webexone-banner:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 50px -18px rgba(74, 27, 110, 0.6);
+    }
+    .webexone-banner__inner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 32px;
+      padding: 28px 36px;
+      flex-wrap: wrap;
+    }
+    .webexone-banner__left { flex: 1 1 380px; min-width: 0; }
+    .webexone-banner__right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+    .webexone-banner__eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #00E0E0;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .webexone-banner__title {
+      margin: 0 0 6px 0;
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: #fff;
+      background: linear-gradient(90deg, #ffffff 0%, #00E0E0 60%, #FF7AB6 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .webexone-banner__sub {
+      margin: 0;
+      font-size: 0.98rem;
+      color: rgba(255, 255, 255, 0.82);
+      line-height: 1.45;
+    }
+    .webexone-banner__date {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.02em;
+    }
+    .webexone-banner__cta {
+      display: inline-block;
+      padding: 9px 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(0, 224, 224, 0.45);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #fff;
+      backdrop-filter: blur(6px);
+    }
+    @media (max-width: 640px) {
+      .webexone-banner__inner { padding: 22px 22px; gap: 18px; }
+      .webexone-banner__right { align-items: flex-start; }
+      .webexone-banner__title { font-size: 1.5rem; }
+    }
+
+    .appendix-card {
+      padding: 22px 24px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .appendix-card h3 {
+      font-size: 1.05rem;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+      color: var(--cisco-navy);
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .appendix-card ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .appendix-card li {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--ink-soft);
+    }
+
+    .appendix-card a {
+      color: var(--cisco-blue);
+      font-weight: 600;
+    }
+
+    .appendix-card a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 760px) {
+      .appendix-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    footer {
+      background: var(--cisco-navy);
+      color: #d1deef;
+      padding: 30px 0 28px;
+    }
+
+    .footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-meta {
+      font-size: 0.9rem;
+      color: #c3d3e7;
+    }
+
+    .back-top {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 42px;
+      padding: 0 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .back-top:hover {
+      background: rgba(255, 255, 255, 0.06);
+      text-decoration: none;
+    }
+
+    @media (max-width: 980px) {
+      .two-up,
+      .architecture-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .top-nav .container {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .content-shell {
+        margin-left: 0;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .section-shell {
+        padding: 64px 0;
+        scroll-margin-top: 80px;
+      }
+
+      .hero {
+        padding: 22px 0 20px;
+      }
+
+      .card,
+      .architecture-item,
+      .embed-wrap {
+        padding: 22px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .nav-link {
+        padding: 0 11px;
+        font-size: 0.88rem;
+      }
+
+      .embed-placeholder {
+        min-height: 400px;
+        padding: 20px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
+
+    @media print {
+      .top-nav,
+      .back-top {
+        display: none;
+      }
+
+      .content-shell {
+        margin-left: 0;
+      }
+
+      body {
+        background: #fff;
+        color: #000;
+      }
+
+      .hero,
+      .section-shell.alt,
+      footer {
+        background: #fff !important;
+        color: #000 !important;
+      }
+
+      .hero {
+        padding: 24px 0 18px;
+        border-bottom: 2px solid #000;
+      }
+
+      .hero-subtitle,
+      .hero-caption,
+      .footer-meta,
+      .section-intro,
+      .card p,
+      .card li,
+      .architecture-item p {
+        color: #222 !important;
+      }
+
+      .card,
+      .architecture-item,
+      .embed-wrap,
+      .embed-placeholder {
+        box-shadow: none;
+        border-color: #bbb;
+      }
+
+      a {
+        color: #000 !important;
+        text-decoration: underline;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="top-nav" aria-label="Section navigation">
+    <div class="container">
+      <a class="wordmark" href="#top" aria-label="Back to top">cisco</a>
+      <nav aria-label="Primary navigation">
+        <ul class="nav-links">
+          <li><a class="nav-link" href="#agenda">Agenda</a></li>
+          <li><a class="nav-link" href="#architecture">Solution</a></li>
+          <li><a class="nav-link" href="#qa">Q&amp;A</a></li>
+          <li><a class="nav-link" href="#appendix">Appendix</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="content-shell">
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="container">
+          <div class="hero-copy">
+            <h1 id="hero-title">Webex Contact Center Deep Dive</h1>
+            <p class="hero-subtitle">Farmers Insurance — June 2026</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="agenda" class="section-shell alt" aria-labelledby="agenda-title">
+        <div class="container">
+          <span class="eyebrow">Session flow</span>
+          <h2 id="agenda-title" class="section-title">Agenda</h2>
+
+          <ol class="agenda-steps">
+            <li><span class="agenda-step-num">01</span><span class="agenda-step-text">Introductions</span></li>
+            <li><span class="agenda-step-num">02</span><span class="agenda-step-text">Solution Overview</span></li>
+            <li><span class="agenda-step-num">03</span><span class="agenda-step-text">Customer Experience Story</span></li>
+            <li class="active"><span class="agenda-step-num">04</span><span class="agenda-step-text">Farmers' Deep Dive Topics</span></li>
+          </ol>
+
+          <div class="agenda-subgrid">
+            <div class="agenda-subcard">
+              <span class="card-kicker">Part 1 — Technology &amp; Workflow</span>
+              <ul>
+                <li>New vs. retrofitted functionality</li>
+                <li>Skill and routing management tools</li>
+                <li>Journey continuity end-to-end</li>
+                <li>Agent assistance: available now vs planned</li>
+                <li>QA / QM</li>
+                <li>Built-in vs partner-supported AI capabilities</li>
+              </ul>
+            </div>
+            <div class="agenda-subcard">
+              <span class="card-kicker">Part 2 — Claims-Specific Use Cases</span>
+              <ul>
+                <li>Business logic portal: what it is and who accesses it</li>
+                <li>Real-time and historical reporting</li>
+                <li>Approach to skilling agents</li>
+                <li>Compliance: customer AI opt-out</li>
+                <li>Outsourced agents abroad handling US customer calls</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="architecture" class="section-shell" aria-labelledby="architecture-title">
+        <div class="container">
+          <span class="eyebrow">Solution view</span>
+          <h2 id="architecture-title" class="section-title">Solution at a glance</h2>
+          <p class="section-intro">These platform layers work together to power the live scenario and the broader customer journey strategy behind it.</p>
+
+          <div class="architecture-grid">
+            <article class="architecture-item">
+              <span class="architecture-pill">Core</span>
+              <h3>Webex Contact Center</h3>
+              <p>Interaction management across voice and digital journeys.</p>
+            </article>
+
+            <article class="architecture-item">
+              <span class="architecture-pill">AI</span>
+              <h3>Webex AI Agent</h3>
+              <p>Autonomous and scripted customer engagement across self-service flows.</p>
+            </article>
+
+            <article class="architecture-item">
+              <span class="architecture-pill">Assist</span>
+              <h3>Webex AI Assistant</h3>
+              <p>Real-time assist for human agents during live conversations.</p>
+            </article>
+
+            <article class="architecture-item">
+              <span class="architecture-pill">Digital</span>
+              <h3>Webex Connect</h3>
+              <p>Digital channel orchestration, including SMS proof of coverage delivery.</p>
+            </article>
+
+            <article class="architecture-item">
+              <span class="architecture-pill">Context</span>
+              <h3>Customer Journey Data Services / CJDS</h3>
+              <p>Cross-channel context and continuity across autonomous and agent-led moments.</p>
+            </article>
+
+            <article class="architecture-item">
+              <span class="architecture-pill">Integration</span>
+              <h3>Model Context Protocol / MCP</h3>
+              <p>Back-end integration layer that connects the experience to customer systems.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="qa" class="section-shell" aria-labelledby="qa-title">
+        <div class="container">
+          <span class="eyebrow">Audience participation</span>
+          <h2 id="qa-title" class="section-title">Ask a question — Live Q&amp;A</h2>
+          <p class="section-intro">Use the embedded panel below during the session to submit and upvote questions for the discussion.</p>
+
+          <div class="slido-meta">
+            <span class="slido-meta-label">Join code</span>
+            <code class="slido-passcode">farmers</code>
+            <span class="slido-meta-hint">Use this passcode if Slido prompts for one.</span>
+          </div>
+
+          <div class="embed-wrap slido-wrap">
+            <!-- ============================================================ -->
+            <!-- SLIDO EMBED — passcode pre-filled via ?passcode= query param -->
+            <!-- ============================================================ -->
+            <iframe
+              src="https://app.sli.do/event/92SkaEhGddgGYc5omAQgk8?passcode=farmers"
+              height="100%"
+              width="100%"
+              frameBorder="0"
+              style="min-height: 560px;"
+              allow="clipboard-write"
+              title="Slido Q&amp;A — passcode: farmers"></iframe>
+          </div>
+        </div>
+      </section>
+
+      <section id="appendix" class="section-shell alt" aria-labelledby="appendix-title">
+        <div class="container">
+          <span class="eyebrow">Reference</span>
+          <h2 id="appendix-title" class="section-title">Appendix — Reference Links</h2>
+          <p class="section-intro">Public Cisco documentation for everything covered in today's session. All links are public — no Cisco login required.</p>
+
+          <a href="https://www.webexone.com/" target="_blank" rel="noopener" class="webexone-banner">
+            <div class="webexone-banner__inner">
+              <div class="webexone-banner__left">
+                <span class="webexone-banner__eyebrow">Flagship Event</span>
+                <h3 class="webexone-banner__title">WebexOne 2026</h3>
+                <p class="webexone-banner__sub">The premier AI, collaboration &amp; customer experience event.</p>
+              </div>
+              <div class="webexone-banner__right">
+                <span class="webexone-banner__date">Oct 5–8, 2026 · Austin, TX</span>
+                <span class="webexone-banner__cta">Visit webexone.com →</span>
+              </div>
+            </div>
+          </a>
+
+          <div class="appendix-grid">
+            <article class="appendix-card">
+              <h3>Webex Contact Center — Product &amp; Overview</h3>
+              <ul>
+                <li><a href="https://www.webex.com/contact-center.html" target="_blank" rel="noopener">Webex Contact Center Product Page</a> — Cloud-based contact center platform for voice and digital channels.</li>
+                <li><a href="https://help.webex.com/en-us/article/n2re5jy" target="_blank" rel="noopener">Webex Contact Center Documentation Hub</a> — Central repository for setup, features, and configuration.</li>
+                <li><a href="https://developer.webex.com/docs/webex-contact-center" target="_blank" rel="noopener">Webex Contact Center for Developers</a> — Developer portal with API documentation.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>Documentation &amp; Admin Guides</h3>
+              <ul>
+                <li><a href="https://help.webex.com/en-us/article/n5595zd" target="_blank" rel="noopener">Setup and Administration Guide</a> — Provisioning, configuration, routing, and management.</li>
+                <li><a href="https://help.webex.com/en-us/article/nhovcy4" target="_blank" rel="noopener">Flow Designer Guide</a> — Building and managing contact flows.</li>
+                <li><a href="https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/webexcc/Analyzer_2/b_analyzeronloinehelp.html" target="_blank" rel="noopener">Analyzer User Guide</a> — Real-time and historical reporting.</li>
+                <li><a href="https://www.cisco.com/c/en/us/td/docs/voice_ip_comm/cust_contact/contact_center/webexcc/desktop_20/webexcc_b_20-desktop-user-guide.html" target="_blank" rel="noopener">Agent Desktop User Guide</a> — Agent and supervisor desktop reference.</li>
+                <li><a href="https://help.webex.com/en-us/article/2dputx" target="_blank" rel="noopener">Set Up Voice Channel</a> — PSTN integration and voice connectivity.</li>
+                <li><a href="https://help.webex.com/en-us/article/n524f2m" target="_blank" rel="noopener">Manage Access</a> — User profiles, permissions, and resource collections.</li>
+                <li><a href="https://help.webex.com/en-us/article/31e39g" target="_blank" rel="noopener">Bulk Operations</a> — CSV-based bulk configuration changes.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>Webex AI Agent &amp; AI Assistant</h3>
+              <ul>
+                <li><a href="https://help.webex.com/en-us/article/ncs9r37" target="_blank" rel="noopener">AI Agent Studio Administration Guide</a> — Creating, configuring, and deploying AI agents.</li>
+                <li><a href="https://help.webex.com/webex-ai-agent" target="_blank" rel="noopener">Webex AI Agent Overview</a> — Capabilities, types, and getting started.</li>
+                <li><a href="https://help.webexconnect.io/docs/getting-started-with-webex-ai-agent-studio" target="_blank" rel="noopener">Getting Started with AI Agent Studio</a> — Quick-start setup guide.</li>
+                <li><a href="https://help.webex.com/en-us/article/s0qro1" target="_blank" rel="noopener">Use AI Agents for Customer Interactions</a> — End-to-end integration with voice and digital channels.</li>
+                <li><a href="https://help.webex.com/en-us/article/n5uo60x" target="_blank" rel="noopener">Custom Data and Custom Events for AI Agents</a> — Event configuration and fulfillment.</li>
+                <li><a href="https://help.webex.com/en-us/article/n8mo4c" target="_blank" rel="noopener">AI Agent Templates</a> — Pre-built autonomous and scripted templates.</li>
+                <li><a href="https://help.webex.com/en-us/article/sz02k8" target="_blank" rel="noopener">Intents, Entities, and Responses</a> — Core AI Agent components.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>Webex Connect (Digital Channels CPaaS)</h3>
+              <p style="font-size: 0.875rem; color: var(--cisco-text-secondary); margin: 0 0 0.75rem 0;"><em>Webex Connect powers digital channel orchestration only (SMS, WhatsApp, email, web chat, messaging apps). Voice channels are handled natively by Webex Contact Center.</em></p>
+              <ul>
+                <li><a href="https://developers.webexconnect.io/" target="_blank" rel="noopener">Webex Connect Developer Portal</a> — Digital-channel CPaaS for SMS, WhatsApp, email, and messaging.</li>
+                <li><a href="https://developers.webexconnect.io/reference/apioverview" target="_blank" rel="noopener">Webex Connect API Documentation</a> — Messaging, contact policy, and profile APIs for digital channels.</li>
+                <li><a href="https://help.webexconnect.io/docs/ai-agent-node" target="_blank" rel="noopener">Flow Builder &amp; AI Agent Node</a> — Building digital workflows with embedded AI agents.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>Model Context Protocol (MCP) &amp; Integration</h3>
+              <ul>
+                <li><a href="https://developer.webex.com/mcp/docs/mcp-ai-agent-studio" target="_blank" rel="noopener">MCP in Webex AI Agent Studio</a> — Connecting third-party tools to AI agents via MCP.</li>
+                <li><a href="https://developer.webex.com/webex-contact-center/docs/api/" target="_blank" rel="noopener">Webex Contact Center API Reference</a> — REST API for programmatic management.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>What's New in Webex Contact Center</h3>
+              <ul>
+                <li><a href="https://help.webex.com/en-us/article/n3v7ldh/What's-new-for-agents-in-Webex-Contact-Center" target="_blank" rel="noopener">What's New for Agents</a> — Agent Desktop, AI Assistant (Real-Time Assist, summaries, transcripts), callbacks, digital self-assignment.</li>
+                <li><a href="https://help.webex.com/en-us/article/o6f77s/What's-new-for-supervisors-in-Webex-Contact-Center" target="_blank" rel="noopener">What's New for Supervisors</a> — Supervisor Desktop, AI Quality Management, coaching insights, WFO Performance Management.</li>
+                <li><a href="https://help.webex.com/article/nv7abhz" target="_blank" rel="noopener">What's New for Administrators</a> — Control Hub, Flow Designer, AI Agent Studio, WFO, CTI connectors, recording management.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>Compliance &amp; Security</h3>
+              <ul>
+                <li><a href="https://help.webex.com/en-us/article/n5595zd" target="_blank" rel="noopener">Webex Contact Center PCI Compliance</a> — PCI features and data protection.</li>
+                <li><a href="https://trustportal.cisco.com/c/r/ctp/home.html" target="_blank" rel="noopener">Cisco Trust Portal</a> — Security, compliance, and privacy documentation.</li>
+              </ul>
+            </article>
+
+            <article class="appendix-card">
+              <h3>Training &amp; Community</h3>
+              <ul>
+                <li><a href="https://academy.webex.com/learn" target="_blank" rel="noopener">Webex Academy</a> — Self-paced courses and product training.</li>
+                <li><a href="https://community.cisco.com/t5/webex-community/ct-p/webex-user" target="_blank" rel="noopener">Webex Community</a> — User forums for peer support and best practices.</li>
+                <li><a href="https://www.youtube.com/c/webex" target="_blank" rel="noopener">Webex YouTube Channel</a> — Official tutorials, demos, and announcements.</li>
+                <li><a href="https://www.cisco.com/site/us/en/learn/events/index.html" target="_blank" rel="noopener">Cisco Events Hub</a> — All Cisco conferences and events (Webex One, Cisco Live, Cisco Connect).</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <div class="footer-row">
+          <p class="footer-meta">© 2026 Cisco Systems, Inc.</p>
+          <a class="back-top" href="#top">Back to top</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
