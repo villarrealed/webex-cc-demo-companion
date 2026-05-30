@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Build Tracker — Farmers WxCC Demo</title>
+<style>
+:root {
+    --cisco-blue: #3070E7;
+    --cisco-dark: #0F1729;
+    --cisco-navy: #07182D;
+    --cisco-green: #22C55E;
+    --cisco-yellow: #F59E0B;
+    --cisco-orange: #FF9000;
+    --cisco-red: #EF4444;
+    --cisco-cyber: #00C8FF;
+    --cisco-gray: #64748B;
+    --cisco-light: #F8FAFC;
+    --cisco-border: #E2E8F0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    background: var(--cisco-light);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.header {
+    background: linear-gradient(135deg, var(--cisco-dark) 0%, #1e293b 100%);
+    color: #fff;
+    padding: 28px 36px;
+}
+.header h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.2px; }
+.header .lede { color: #cbd5e1; margin-top: 4px; font-size: 14px; }
+.header .meta {
+    margin-top: 14px;
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    color: #94A3B8;
+    font-size: 12px;
+}
+.header .meta strong { color: #fff; font-weight: 600; }
+.countdown {
+    display: inline-block;
+    background: var(--cisco-orange);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.container { max-width: 1280px; padding: 24px 36px 60px; }
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.summary-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 14px 18px;
+    box-shadow: 0 1px 3px rgba(15,23,41,0.06);
+    border-top: 3px solid var(--cisco-blue);
+}
+.summary-card .label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--cisco-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+.summary-card .value {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--cisco-dark);
+    margin-top: 4px;
+}
+.summary-card.critical { border-top-color: var(--cisco-red); }
+.summary-card.warn { border-top-color: var(--cisco-orange); }
+.summary-card.ok { border-top-color: var(--cisco-green); }
+
+.section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(15,23,41,0.06);
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+.section-header {
+    padding: 14px 22px;
+    background: var(--cisco-dark);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.section-header.priority-high { background: linear-gradient(135deg, #991b1b 0%, #b91c1c 100%); }
+.section-header.priority-medium { background: linear-gradient(135deg, var(--cisco-blue) 0%, #1d4ed8 100%); }
+.section-header.priority-low { background: linear-gradient(135deg, #475569 0%, #334155 100%); }
+.section-header .count {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.85;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+th {
+    background: var(--cisco-light);
+    color: var(--cisco-dark);
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--cisco-border);
+    font-weight: 600;
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--cisco-border);
+    vertical-align: top;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbfc; }
+
+.task-id {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    color: var(--cisco-gray);
+    font-weight: 600;
+}
+.task-title {
+    font-weight: 600;
+    color: var(--cisco-dark);
+    margin-bottom: 4px;
+}
+.task-detail {
+    font-size: 12.5px;
+    color: #475569;
+    line-height: 1.45;
+}
+.task-detail ul { margin: 4px 0 0 18px; }
+.task-detail li { margin-bottom: 2px; }
+
+.effort {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.effort-s { background: #dcfce7; color: #166534; }
+.effort-m { background: #fef3c7; color: #92400e; }
+.effort-l { background: #fee2e2; color: #991b1b; }
+
+.status {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.status-todo { background: #f1f5f9; color: #475569; }
+.status-in-progress { background: #dbeafe; color: #1e40af; }
+.status-blocked { background: #fee2e2; color: #991b1b; }
+.status-done { background: #dcfce7; color: #166534; }
+.status-followup { background: #fef3c7; color: #92400e; }
+
+.req-link {
+    display: inline-block;
+    background: var(--cisco-dark);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 3px;
+    margin-bottom: 2px;
+}
+.req-link.cisco { background: var(--cisco-orange); }
+
+.col-id { width: 50px; }
+.col-effort { width: 70px; }
+.col-status { width: 90px; }
+.col-day { width: 70px; }
+.col-req { width: 130px; }
+
+.recommendation {
+    background: #fffbeb;
+    border-left: 3px solid var(--cisco-yellow);
+    padding: 10px 14px;
+    margin: 10px 0 14px;
+    font-size: 13px;
+    color: #78350F;
+    border-radius: 0 4px 4px 0;
+}
+.recommendation .label {
+    font-weight: 700;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #92400E;
+    margin-right: 6px;
+}
+
+.intro {
+    background: #f0f7ff;
+    border-left: 4px solid var(--cisco-blue);
+    padding: 14px 18px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: #1e3a5f;
+}
+.intro strong { color: var(--cisco-dark); }
+
+.timeline-section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 18px 22px;
+    box-shadow: 0 1px 3px rgba(15,23,41,0.06);
+    margin-bottom: 22px;
+}
+.timeline-section h2 {
+    font-size: 15px;
+    color: var(--cisco-dark);
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+.day-grid {
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    gap: 4px;
+    margin-top: 10px;
+}
+.day-cell {
+    background: var(--cisco-light);
+    border: 1px solid var(--cisco-border);
+    border-radius: 4px;
+    padding: 6px 4px;
+    text-align: center;
+    font-size: 10px;
+}
+.day-cell .day-num {
+    font-weight: 700;
+    color: var(--cisco-dark);
+    font-size: 11px;
+}
+.day-cell .day-label {
+    color: var(--cisco-gray);
+    font-size: 9px;
+    margin-top: 2px;
+}
+.day-cell .day-tasks {
+    margin-top: 4px;
+    font-size: 9px;
+    color: #475569;
+    line-height: 1.3;
+}
+.day-cell.weekend { background: #f1f5f9; opacity: 0.7; }
+.day-cell.demo { background: var(--cisco-blue); color: #fff; }
+.day-cell.demo .day-num, .day-cell.demo .day-label, .day-cell.demo .day-tasks { color: #fff; }
+.day-cell.review { background: var(--cisco-orange); color: #fff; }
+.day-cell.review .day-num, .day-cell.review .day-label, .day-cell.review .day-tasks { color: #fff; }
+
+.legend-bar {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 11.5px;
+    color: var(--cisco-gray);
+}
+.legend-bar span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-bar .effort, .legend-bar .status { font-size: 10px; }
+
+footer {
+    text-align: center;
+    color: var(--cisco-gray);
+    font-size: 11px;
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--cisco-border);
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Farmers WxCC Demo — Build Tracker</h1>
+    <p class="lede">Tasks, effort, sequencing, and recommendations to get the demo ready.</p>
+    <div class="meta">
+        <span><strong>Demo:</strong> Mon Jun 1, 2026</span>
+        <span><strong>Today:</strong> Sat May 23, 2026</span>
+        <span><strong>Working days left:</strong> 6 (excl. weekends)</span>
+        <span class="countdown">9 days to demo</span>
+    </div>
+</div>
+
+<div class="container">
+
+<div class="intro">
+    <strong>How to use this tracker.</strong> Tasks are grouped by priority: <strong>P1</strong> must be done for the demo to be credible, <strong>P2</strong> strengthens the story, <strong>P3</strong> is nice-to-have. Effort is rough: <span class="effort effort-s">S</span> ≤ half day · <span class="effort effort-m">M</span> 1 day · <span class="effort effort-l">L</span> 2+ days.
+    <br><br>
+    <strong>Two checkpoints drive the plan:</strong> <span style="color:var(--cisco-orange);font-weight:600;">Thu May 28 — internal team review</span> (show the working live spine, gather feedback, leave room for changes) and <span style="color:var(--cisco-blue);font-weight:600;">Mon Jun 1 — customer demo</span>. The live config (T1–T6 + C1/C2) should be demonstrable end-to-end by <strong>Tue 26 EOD</strong>, with Wed 27 as buffer / smoke-test day so Thursday's review runs clean. Deck and polish work happens Fri 29 after feedback lands; dry-run Sat 30.
+</div>
+
+<!-- ============ SUMMARY ============ -->
+<div class="summary-grid">
+    <div class="summary-card critical">
+        <div class="label">P1 critical</div>
+        <div class="value">16</div>
+    </div>
+    <div class="summary-card warn">
+        <div class="label">P2 important</div>
+        <div class="value">5</div>
+    </div>
+    <div class="summary-card">
+        <div class="label">P3 nice-to-have</div>
+        <div class="value">3</div>
+    </div>
+    <div class="summary-card ok">
+        <div class="label">P1 done</div>
+        <div class="value">6 / 16</div>
+    </div>
+    <div class="summary-card warn">
+        <div class="label">Working days left</div>
+        <div class="value">6</div>
+    </div>
+</div>
+
+<!-- ============ DAY PLAN ============ -->
+<div class="timeline-section">
+    <h2>Day-by-day plan (May 21 → Jun 1) — 6 of 16 P1 tasks complete</h2>
+    <div class="day-grid">
+        <div class="day-cell">
+            <div class="day-num">Thu 21</div>
+            <div class="day-label">Done</div>
+            <div class="day-tasks">T1 skills/queues ✓</div>
+        </div>
+        <div class="day-cell">
+            <div class="day-num">Fri 22</div>
+            <div class="day-label">Done</div>
+            <div class="day-tasks">T3 JDS write/read ✓ · SF MCP found ✓</div>
+        </div>
+        <div class="day-cell" style="background:#fef3c7;border-color:#92400e;">
+            <div class="day-num">Sat 23</div>
+            <div class="day-label">TODAY</div>
+            <div class="day-tasks">T2 SF MCP — 23 tools live on Render ✓ · T16 Jessie tools ✓ · T17 KB ✓ · T18 Agent Assist pivot ✓ · T19 Flow specs ✓</div>
+        </div>
+        <div class="day-cell weekend">
+            <div class="day-num">Sun 24</div>
+            <div class="day-label">Wknd</div>
+            <div class="day-tasks">Optional: start T20 Connect Flows</div>
+        </div>
+        <div class="day-cell">
+            <div class="day-num">Mon 25</div>
+            <div class="day-label"></div>
+            <div class="day-tasks">T20 build 5 Connect Flows · T21 Jessie Goal/Instructions · T6 JDS lookup · <strong>C1 pass 1 (confidence in MCP)</strong> · <strong>C2 confirm WxCC edition</strong></div>
+        </div>
+        <div class="day-cell">
+            <div class="day-num">Tue 26</div>
+            <div class="day-label"></div>
+            <div class="day-tasks">T22 Control Hub registration · T5 dynamic welcome · <strong>C1 pass 2 (JDS payload + widget)</strong> · <strong>C2 bulk ops + scheduler</strong> · walk spine end-to-end</div>
+        </div>
+        <div class="day-cell">
+            <div class="day-num">Wed 27</div>
+            <div class="day-label"></div>
+            <div class="day-tasks">Buffer / hardening · pre-review smoke test of full spine · slide outline start</div>
+        </div>
+        <div class="day-cell review">
+            <div class="day-num">Thu 28</div>
+            <div class="day-label">INTERNAL REVIEW</div>
+            <div class="day-tasks">Demo both tracks to team · capture feedback · T11 deck outline in parallel</div>
+        </div>
+        <div class="day-cell">
+            <div class="day-num">Fri 29</div>
+            <div class="day-label"></div>
+            <div class="day-tasks">Absorb feedback · T11 deck build &amp; finish · T12 Q&amp;A sheet</div>
+        </div>
+        <div class="day-cell weekend">
+            <div class="day-num">Sat 30</div>
+            <div class="day-label">Wknd</div>
+            <div class="day-tasks">T13 full dry run · T14 checklist · buffer</div>
+        </div>
+        <div class="day-cell demo">
+            <div class="day-num">Mon Jun 1</div>
+            <div class="day-label">DEMO</div>
+            <div class="day-tasks">Showtime</div>
+        </div>
+    </div>
+    <div class="legend-bar">
+        <span><span class="effort effort-s">S</span> ≤ half day</span>
+        <span><span class="effort effort-m">M</span> ~1 day</span>
+        <span><span class="effort effort-l">L</span> 2+ days</span>
+        <span><span class="req-link">Customer</span> stated requirement</span>
+        <span><span class="req-link cisco">Cisco</span> our addition</span>
+    </div>
+</div>
+
+<!-- ============ P1 — CRITICAL ============ -->
+<section class="section">
+    <div class="section-header priority-high">
+        P1 — Critical (must be done)
+        <span class="count">9 tasks · ~7 days</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th class="col-id">ID</th>
+                <th>Task</th>
+                <th class="col-effort">Effort</th>
+                <th class="col-day">Target</th>
+                <th class="col-req">Maps to</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="task-id">T1</td>
+                <td>
+                    <div class="task-title">Skills-based queue + skill configuration</div>
+                    <div class="task-detail">
+                        Skills-based routing provisioned (Fri 22). 8 skills defined, 2 multi-skill profiles (<code>edvill_Farmers_Agent</code> universal, <code>edvill_Farmers_Sup</code> with Senior Adjuster), 2 teams, 5 queues live: <code>edvill_Q_Auto_FNOL</code>, <code>edvill_Q_Auto_Service</code>, <code>edvill_Q_Property_FNOL</code>, <code>edvill_Q_Bilingual_Auto</code>, <code>edvill_Q_Escalation</code>.
+                        <div class="recommendation"><span class="label">Rec</span>Done — Block 1.2 and Block 2.3 unblocked. <strong>Constraint honored:</strong> 1 agent on universal profile + 1 supervisor on Senior Adjuster profile. Demo strategy: lead with config walkthrough (skill definitions, queue settings, flow canvas) so the audience reads the single answering agent as "the eligible agent." Pre-record 60s clips for bilingual + Best Available routing patterns (tracked in T13 dry-run prep).</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-m">M</span></td>
+                <td>Thu 21 – Fri 22</td>
+                <td>
+                    <span class="req-link">R1.2</span>
+                    <span class="req-link">R2.3</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T2</td>
+                <td>
+                    <div class="task-title">Salesforce MCP integration for agentic AI / agent assist</div>
+                    <div class="task-detail">
+                        <strong>MAJOR SHORTCUT FOUND (Fri 22):</strong> Production-quality MCP server already built — <code>villarrealed/salesforce-mcp-server</code> (private GitHub, Python FastMCP, Streamable HTTP transport, Render-ready). 8 tools live: <code>search_contacts</code>, <code>lookup_contact_by_phone</code> (phone-format tolerant — perfect for ANI lookup), <code>get_contact</code>, <code>search_accounts</code>, <code>get_account</code>, <code>search_cases</code>, <code>get_case</code>, <code>create_case</code>. OAuth refresh-token flow auto-refreshes on 401. Pydantic schemas on every tool. Connected to Cisco shared SF org via existing "MCP Server" External Client App (owned by edvill@cisco.com, enabled Apr 21).
+                        <br><br>
+                        <strong>AI Agent Studio MCP support CONFIRMED</strong> via official docs (librarian Fri 22):
+                        <ul>
+                            <li>Streamable HTTP transport explicitly supported — matches our server</li>
+                            <li>Config path: Developer Portal → register "Agentic App" → Control Hub → Apps → Agentic Apps → provision auth → AI Agent Studio → agent → Actions tab → Add actions → Select available → MCP tools auto-populate</li>
+                            <li>Auth options: OAuth2 Client Credentials, API Key, Custom Headers (5 max). <strong>Use API Key</strong> for demo — simpler, avoids OAuth bridge complexity</li>
+                            <li>Fulfillment timeout: 30s default (configurable). SF lookups target &lt;3s</li>
+                            <li>Per-call telemetry visible in AI Agent Studio: success/failure, latency ms, transaction ID</li>
+                        </ul>
+                        <strong>Remaining work (~3-4h total, down from "L" multi-day):</strong>
+                        <ol>
+                            <li>Add bearer-token middleware to server.py (~15 min) — gates the public Render endpoint</li>
+                            <li>Add <code>verify_identity</code> tool (~15 min) — wraps <code>lookup_contact_by_phone</code> + name match</li>
+                            <li>Deploy to Render via existing render.yaml (~30 min) — set CLIENT_ID/SECRET/REFRESH_TOKEN + MCP_BEARER_TOKEN env vars</li>
+                            <li>Load Sarah Smith + 2-3 personas into SF Contact records with phone <code>+14155551212</code> (~30 min)</li>
+                            <li>Register MCP server on Webex Developer Portal as Agentic App (~15 min)</li>
+                            <li>Provision in Control Hub (admin step) — <strong>get admin access by Sun 24</strong> (~10 min admin work)</li>
+                            <li>Wire into AI Agent Studio: Actions tab → Add tools (~5 min)</li>
+                            <li>End-to-end test on live call to <code>+14155551212</code> (~1h)</li>
+                        </ol>
+                        <div class="recommendation"><span class="label">Rec</span>Critical path: Control Hub provisioning needs admin — ask Sun 24, not later. Bench Salesforce API latency early (Render free tier sleeps after 15min — use paid $7/mo or keep-alive ping for demo day). Test schema validation with MCP Inspector locally before Webex wiring. If Webex provisioning slips, fall back to pre-recorded clip — server itself is low-risk now that it's already built.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Sat 23 – Wed 27</td>
+                <td>
+                    <span class="req-link">R1.4</span>
+                    <span class="req-link">R1.6</span>
+                    <span class="req-link cisco">Featured use case</span>
+                </td>
+                <td><span class="status status-in-progress">In progress</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T3</td>
+                <td>
+                    <div class="task-title">JDS context append + read — direct from WxCC (all writes + reads)</div>
+                    <div class="task-detail">
+                        Read/write spine to CJDS proven end-to-end (Thu 22). <strong>Architecture: Option A — all CJDS writes direct from WxCC Flow Designer.</strong> Connect orchestration deprecated for this demo.
+                        <ul>
+                            <li><strong>Write path (direct):</strong> WxCC HTTP Request node → <code>POST /publish/v1/api/event?workspaceId={wsId}</code> via Webex CC connector. CloudEvents body shape (specversion 1.0, type, source, time, identity, identitytype, data{...}). CJDS returns 202 Accepted. Same connector handles auth/token refresh.</li>
+                            <li><strong>Read path:</strong> WxCC HTTP Request node (synchronous) → <code>GET /v1/api/events/workspace-id/{wsId}?identity={ANI}&amp;pageSize=1&amp;filter=type=='com.cisco.wxcc.task.routed'</code> via same connector.</li>
+                            <li><strong>Payload fields:</strong> intent, customerLang, routedQueue, aiOptOut, customerID, vaSummary, vaOutcome, skillsApplied, uiData (division/title/subTitle/iconType/filterTags). Note: booleans serialize as strings (<code>"false"</code>) — use string comparison in conditions.</li>
+                            <li><strong>Why direct over Connect:</strong> single destination (CJDS only), lower latency, fewer hops, easier to debug in WxCC flow logs, demo story is cleaner ("one node writes the summary"). Connect orchestration shines for multi-destination/multi-channel — overkill here.</li>
+                            <li><strong>Deprecated:</strong> Connect write webhook (<code>events/9FB0GS61XX</code>) + read webhook (<code>events/FVYFSJB20A</code>). Connect inbound webhooks are async-only — no sync response possible. Kept in tenant for reference but not used in demo flow.</li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Rec</span>Wire CJDS read as first node after NewPhoneContact. Use <code>$.meta.resultCount</code> for returning-caller branch, <code>$.data[0].data.customerLang</code> for language overlay, <code>$.data[0].data.intent</code> for repeat-reason prompt (T6), <code>$.data[0].data.aiOptOut</code> for AI opt-out check. CJDS writes: one HTTP Request after VA block (resolved + escalated outcomes write same event type <code>com.cisco.wxcc.va.summary</code> with different <code>vaOutcome</code> field). Always add Failure/Timeout branches falling through to default path so flow never breaks on CJDS errors.</div>
+                        <div class="recommendation" style="background:#d1fae5;border-left-color:#065f46;"><span class="label" style="background:#065f46;">Root cause found (Fri 29)</span><strong>Custom event <code>type</code> values do NOT render in the Customer Journey widget by default.</strong> Widget renders only platform-native types (<code>task:new</code>, <code>task:connected</code>, <code>task:ended</code>, <code>agent:state_change</code>, <code>wrapup</code>) with built-in renderers. Custom types like <code>com.cisco.wxcc.va.summary</code> are accepted (202), stored in CJDS, and their <code>filterTags</code> appear in the Filter By dropdown — but the entries themselves are silently dropped from the timeline. Also confirmed: <code>iconType: "robot"</code> is NOT in the widget icon map (Momentum Design); use <code>"task"</code>. <strong>Fix:</strong> publish as <code>type: "task:new"</code> with <code>uiData.title</code>, <code>uiData.subTitle</code>, <code>uiData.iconType: "task"</code>, <code>uiData.filterTags</code>. Verified working: event <code>78c69ffa-9bec-4f26-88d5-15b0026e8661</code> rendered as "AI Virtual Agent Summary" in widget. Sources: <a href="https://github.com/CiscoDevNet/cjaas-widgets/blob/main/CustomerJourney/README_VERSION_10.0.0.md">CJAAS widgets README v10</a>, <a href="https://raw.githubusercontent.com/CiscoDevNet/cjaas-widgets/refs/heads/main/CustomerJourney/src/assets/md-ui-icon-map.json">icon map</a>.</div>
+                        <div class="recommendation" style="background:#fef3c7;border-left-color:#92400e;"><span class="label" style="background:#92400e;">Follow up — open</span><strong>Identity variable resolves to empty string in Flow Designer.</strong> After switching to <code>task:new</code>, HTTP Request returns 400 BAD_REQUEST: <code>"Identity cannot be null or empty", "Invalid Phone Number"</code>. Body shows <code>"identity": ""</code> — the Pebble expression used (<code>{{NewPhoneNumber}}</code>) doesn't match the actual variable name in this flow. <strong>Action:</strong> open flow → find the variable holding caller ANI in E.164 (likely <code>{{NewPhoneContact.ANI}}</code> or local var assigned earlier in flow that previously produced <code>+16027991349</code>). Copy that exact expression into the HTTP Request body's <code>identity</code> field. Same fix applies to <code>summary</code>/<code>subTitle</code> fields — should be <code>{{Summary}}</code> (or <code>{{MetaData.Summary}}</code> per Set Variable test that worked) not the hardcoded string currently in body.</div>
+                        <div class="recommendation"><span class="label">Working payload template</span><pre style="background:#1e293b;color:#e2e8f0;padding:12px;border-radius:6px;font-size:11px;overflow-x:auto;">{
+  "id": "{{uuid()}}",
+  "specversion": "1.0",
+  "type": "task:new",
+  "source": "/com/cisco/wxcc/edvill_farmers_demo",
+  "identitytype": "phone",
+  "identity": "{{NewPhoneContact.ANI}}",
+  "datacontenttype": "application/json",
+  "data": {
+    "summary": "{{Summary}}",
+    "outcome": "resolved",
+    "uiData": {
+      "title": "AI Virtual Agent Summary",
+      "subTitle": "{{Summary}}",
+      "iconType": "task",
+      "filterTags": ["AI", "Summary", "Resolved"]
+    }
+  }
+}</pre></div>
+                    </div>
+                </td>
+                <td><span class="effort effort-m">M</span></td>
+                <td>Thu 22 (done, follow-up open)</td>
+                <td>
+                    <span class="req-link">R1.3</span>
+                    <span class="req-link">R2.4</span>
+                </td>
+                <td><span class="status status-followup">Follow up</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T6</td>
+                <td>
+                    <div class="task-title">Modify call flow — JDS lookup for repeat-reason check</div>
+                    <div class="task-detail">
+                        Add a JDS lookup step early in the call flow: if the caller has a recent interaction, prompt "are you calling about &lt;reason&gt;?" Demonstrates journey continuity in voice (not just web/chat).
+                        <div class="recommendation"><span class="label">Rec</span>Pair this with T3 — the lookup is only meaningful if there's a recent interaction with a summary attached. Stage one Sarah Smith interaction in JDS before the demo so the repeat-reason path actually triggers.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-m">M</span></td>
+                <td>Mon 25</td>
+                <td>
+                    <span class="req-link">R1.3</span>
+                    <span class="req-link">R1.2</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+
+             <tr>
+                <td class="task-id">C1</td>
+                <td>
+                    <div class="task-title">AI confidence scoring on journey events — talk track only (no build)</div>
+                    <div class="task-detail">
+                        <strong>Decision (Fri 29):</strong> Will not build. Discussing this with the customer conversationally during the compliance section instead. No MCP, JDS, or widget work required for this topic.
+                        <div class="recommendation"><span class="label">Talk track</span>Acknowledge the compliance requirement (every AI touch needs an auditable confidence score: auth / intent / execution). Outline the future-state architecture verbally: MCP write tools return <code>ai_confidence</code>, Jessie includes it in CJDS event payloads, Customer Journey widget surfaces a badge or text on the timeline, compliance pulls via journey GET. Note this is a known build pattern, not a demo artifact today. If pressed, offer a follow-up working session to scope.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">—</span></td>
+                <td>Talk only</td>
+                <td>
+                    <span class="req-link">R1.3</span>
+                    <span class="req-link">R2.4</span>
+                    <span class="req-link cisco">Compliance</span>
+                </td>
+                <td><span class="status status-followup">Talk only</span></td>
+            </tr>
+
+             <tr>
+                <td class="task-id">C2a</td>
+                <td>
+                    <div class="task-title">Deck — UCCE→WxCC translation + Two Paths Forward slides ✓ Done</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Deck complete. Walking through live in the demo — no further build work.
+                        <ul>
+                            <li><strong>UCCE PQ → WxCC translation slide:</strong> side-by-side. UCCE "Claims_Routing" PQ vs WxCC equivalent (skill profiles + Queue Contact with Skill Relaxation). Calls out three losses on standard: no consider-if, no centralized queue governance, no dynamic PQ nodes.</li>
+                            <li><strong>Two Paths Forward slide:</strong> 8-row WxCCE vs WxCC standard comparison. Recommendation: "Most UCCE shops with Farmers' profile land on WxCCE first, then evaluate WxCC standard as 2-3yr modernization." Covers customer's auto-revert question (Replace-and-Restore).</li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Talk track</span>Earns the room: shows we understand the UCCE world and aren't pushing a path that requires refactoring 10+ PQ scripts. Land the "WxCCE first, WxCC standard as 2-3yr modernization" framing as the recommendation.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R2.3</span>
+                    <span class="req-link cisco">UCCE positioning</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+             <tr>
+                <td class="task-id">C2b</td>
+                <td>
+                    <div class="task-title">Automated overflow stack ✓ Done — walking through live</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Complete. Walking through live in the demo — no further build work.
+                        <p>Talk-frame: the WxCC-standard translation pattern for UCCE PQ multi-step logic. Four GA building blocks wired together:</p>
+                        <ul>
+                            <li><strong>Skill Relaxation in Queue Contact node</strong> — progressive proficiency drop (≥8 at 0s → ≥5 at 30s → ≥1 at 60s). <span class="badge badge-ga">GA</span></li>
+                            <li><strong>Call Distribution Groups (CDGs)</strong> — time-based multi-team expansion. <span class="badge badge-ga">GA</span></li>
+                            <li><strong>Business Rules Engine + CSV</strong> — conditional routing on caller_tier / claim_type. Substitutes UCCE consider-if. <span class="badge badge-ga">GA</span></li>
+                            <li><strong>Webhook on <code>task:parked</code></strong> — triggers skill boost, supervisor alert, or dashboard tile. <span class="badge badge-ga">GA</span></li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Talk track</span>"This is your PQ multi-step logic in WxCC today, all GA. AI Routing GA 2026 layers on top." Lands the message that WxCC can match Farmers' UCCE multi-step overflow without custom code or refactoring 10+ PQ scripts.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-m">M</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R2.3</span>
+                    <span class="req-link cisco">Automated overflow</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+             <tr>
+                <td class="task-id">C2c</td>
+                <td>
+                    <div class="task-title">Edition-dependent reskilling demo ✓ Done — walking through live</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Complete. Walking through live in the demo — no further build work.
+                        <ul>
+                            <li><strong>WxCCE path — native <strong>Attribute Assignment → Replace and Restore</strong></strong> (Admin Portal): multi-agent bulk + time-bounded + recurring (Daily/Weekly/Monthly) + timezone-aware. The literal native answer to the customer's auto-revert question. Doc: <code>help.webex.com/nhy3hvdb</code>.</li>
+                            <li><strong>WxCC standard path —</strong> no native Replace-and-Restore; positioned as webhook on <code>task:parked</code> → handler → Config API skill-profile boost → cron-driven revert. Frame: "automated overflow handles 80%, this is the 20% escape hatch."</li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Talk track</span>Lead with WxCCE Replace-and-Restore as the native, single-feature answer to the auto-revert + bulk-reskill ask. If they're on standard WxCC, show the webhook escape-hatch pattern as the API-driven equivalent.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R2.3</span>
+                    <span class="req-link cisco">Reskilling auto-revert</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">C2d</td>
+                <td>
+                    <div class="task-title">Bulk operations CSV ✓ Done — walking through live</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Complete. Walking through live in the demo — no further build work.
+                        <p>Control Hub → Services → Contact Center → <strong>Bulk Operations</strong> → Users → Export CSV → edit <code>Skill Profile</code> column → re-import. Permanent-mix-change tool (campaign launches, seasonal staffing) — distinct from C2c (temporary auto-revert). <span class="badge badge-ga">GA</span> Max 5,000 rows per CSV. Doc: <a href="https://help.webex.com/en-us/article/imku7e/CSV-Definition-for-Bulk-Operations-in-Webex-Contact-Center">help.webex.com/imku7e</a>.</p>
+                        <div class="recommendation"><span class="label">Talk track</span>Frame as the permanent skill-mix tool (campaign launches, seasonal staffing) — distinct from C2c's temporary auto-revert pattern. Works in both editions.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R2.3</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+             <tr>
+                <td class="task-id">T11</td>
+                <td>
+                    <div class="task-title">Presentation deck — "what you will see" + product overlap map ✓ Done</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Deck complete and shared. Walking through live in the demo.
+                        <ul>
+                            <li>1-3 explainer slides per block (what · why · what you'll see)</li>
+                            <li>Product overlap map (Uniphore / Verint / NICE IEX / Google CCAI vs native Webex)</li>
+                            <li>UCCE/WxCCE → WxCC component map slide</li>
+                            <li>GA vs Coming-Soon vs Roadmap legend</li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Talk track</span>Deck runs alongside the live tenant. Use explainer slides as the "what you'll see" framing before each live block, then switch to the tenant for the demo itself.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-l">L</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R1.1</span>
+                    <span class="req-link">R1.4</span>
+                    <span class="req-link">R1.6</span>
+                    <span class="req-link cisco">3rd-party overlap</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T13</td>
+                <td>
+                    <div class="task-title">End-to-end dry run with the full Sarah Smith spine</div>
+                    <div class="task-detail">
+                        Run the complete 185-minute demo flow at least once before Mon Jun 1. Catches:
+                        <ul>
+                            <li>Login/timeout issues on the tenant</li>
+                            <li>Order-of-operations bugs (e.g. T3 needs T6 staged first)</li>
+                            <li>Slide-to-tenant transitions and Cmd-Tab discipline</li>
+                            <li>Timing — confirm 125 + 60 min holds with explainers</li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Rec</span>Friday May 29 afternoon. Even a 60-minute compressed run-through will surface the showstoppers. Saturday May 30 is the buffer if anything blows up.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-m">M</span></td>
+                <td>Fri 29</td>
+                <td>
+                    <span class="req-link">all</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T14</td>
+                <td>
+                    <div class="task-title">Pre-demo checklist — tenant, agents, data state</div>
+                    <div class="task-detail">
+                        Lock the demo environment 24h before:
+                        <ul>
+                            <li>Verify demo agent + supervisor accounts log in cleanly</li>
+                            <li>Confirm SF MCP server is up (or fallback recording is queued)</li>
+                            <li>Pre-stage Sarah Smith persona in JDS (so T6 lookup hits)</li>
+                            <li>Clear browser caches; confirm 2-window layout works on demo monitor</li>
+                            <li>Phone number / softphone tested for inbound call trigger</li>
+                            <li>Slide window on second monitor, presenter-view tested</li>
+                        </ul>
+                        <div class="recommendation"><span class="label">Rec</span>Build this as a literal checklist file — <code>pre-demo-checklist.md</code> — and tick through it Sun May 31 evening, not the morning of.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Sun 31</td>
+                <td>
+                    <span class="req-link">all</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ============ P2 — IMPORTANT ============ -->
+<section class="section">
+    <div class="section-header priority-medium">
+        P2 — Important (strengthens the demo)
+        <span class="count">5 tasks · ~2.5 days</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th class="col-id">ID</th>
+                <th>Task</th>
+                <th class="col-effort">Effort</th>
+                <th class="col-day">Target</th>
+                <th class="col-req">Maps to</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+             <tr>
+                <td class="task-id">T4</td>
+                <td>
+                    <div class="task-title">RBAC examples — 2-3 role walkthroughs ✓ Done</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Complete. Walking through live in the demo — no further build work.
+                        <p>Example roles (Admin, Supervisor, Business Analyst, Agent) cloned from built-in templates with permissions trimmed for visible contrast in Block 2.1.</p>
+                        <div class="recommendation"><span class="label">Talk track</span>Switch profiles live to show what each role can/can't see in the admin portal. 3 roles keeps the screen clean and the contrast obvious.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-m">M</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R2.1</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T5</td>
+                <td>
+                    <div class="task-title">Dynamic welcome message research — Webex AI Agent</div>
+                    <div class="task-detail">
+                        Investigate what context can be injected into the AI Agent's welcome message: caller ID, prior interaction summary, account tier, claim status, etc.
+                        <div class="recommendation"><span class="label">Rec</span>Timebox to 2 hours. If dynamic content needs a Flow Designer pre-step to populate variables, decide go/no-go fast — don't sink a full day into this when T2/T3 are higher leverage.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 22 or Wed 27</td>
+                <td>
+                    <span class="req-link">R1.4</span>
+                    <span class="req-link cisco">Featured use case</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T8</td>
+                <td>
+                    <div class="task-title">Compliance demo — AI opt-out path in flow</div>
+                    <div class="task-detail">
+                        Add explicit "say 'agent' to opt out of AI" path. AI disclosure prompt at start. Logged event in JDS (links to T3). For Block 2.4.
+                        <div class="recommendation"><span class="label">Rec</span>If T3 lands by Wed 27, this is half a day on top — same flow, additional branch. Skip it only if T1/T2 slip and you need to protect demo time.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Wed 27 (after T3)</td>
+                <td>
+                    <span class="req-link">R2.4</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+
+             <tr>
+                <td class="task-id">T9</td>
+                <td>
+                    <div class="task-title">QA / QM auto-evaluation example ✓ Done</div>
+                    <div class="task-detail">
+                        <strong>Status (Fri 29):</strong> Complete. Walking through live in the demo — no further build work.
+                        <p>Sample recorded interaction available with AI QM scoring applied for Block 1.5 — real evaluated call, not empty dashboards.</p>
+                        <div class="recommendation"><span class="label">Talk track</span>Pull up the pre-scored call live, walk through the scorecard, and call out which evaluation criteria fired automatically vs. would need supervisor review.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 29 ✓</td>
+                <td>
+                    <span class="req-link">R1.5</span>
+                </td>
+                <td><span class="status status-done">Done</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T12</td>
+                <td>
+                    <div class="task-title">Q&amp;A / objection-handling cheat sheet</div>
+                    <div class="task-detail">
+                        One-pager for the navigator role: top 15 likely questions (Uniphore overlap, IEX migration, AI accuracy, data residency, recording compliance) with crisp answers and a "punt to follow-up" list for anything genuinely unknown.
+                        <div class="recommendation"><span class="label">Rec</span>Half a day on Fri 29. Pull from <code>account-team-exec-summary</code> and <code>demo-asset-mapping.md</code> — you've already drafted most of this material.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 29</td>
+                <td>
+                    <span class="req-link">all</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ============ P3 — NICE TO HAVE ============ -->
+<section class="section">
+    <div class="section-header priority-low">
+        P3 — Nice-to-have (if time allows)
+        <span class="count">3 tasks · ~1 day</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th class="col-id">ID</th>
+                <th>Task</th>
+                <th class="col-effort">Effort</th>
+                <th class="col-day">Target</th>
+                <th class="col-req">Maps to</th>
+                <th class="col-status">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="task-id">T7</td>
+                <td>
+                    <div class="task-title">Custom Analyzer report example</div>
+                    <div class="task-detail">
+                        Build one custom report (e.g. AI containment rate by skill, or claims FNOL handle time by queue) for Block 2.2 so the historical-reporting answer isn't just "here are the canned reports."
+                        <div class="recommendation"><span class="label">Rec</span>Drop if T1-T6 are running tight. The canned dashboards are enough to answer R2.2 — a custom report is icing.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Thu 28 if time</td>
+                <td>
+                    <span class="req-link">R2.2</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T10</td>
+                <td>
+                    <div class="task-title">Supervisor real-time barge / monitor / whisper demo</div>
+                    <div class="task-detail">
+                        Wire up a second test agent on a call so the supervisor can actually barge/monitor/whisper live in Block 1.1. Otherwise it's a verbal mention.
+                        <div class="recommendation"><span class="label">Rec</span>Needs a second person or a softphone bot to hold a call. Skip unless you have a colleague to help during the demo or can script a held call.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Thu 28 if time</td>
+                <td>
+                    <span class="req-link cisco">Desktop deep dive</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+
+            <tr>
+                <td class="task-id">T15</td>
+                <td>
+                    <div class="task-title">International / offshore PSTN slide</div>
+                    <div class="task-detail">
+                        For Block 2.5 (R2.5) — this is slide-only per the outline, but make sure the slide actually exists with the connectivity options diagram (CCP / BYoPSTN / local breakout / regional media).
+                        <div class="recommendation"><span class="label">Rec</span>Roll into T11 deck build. Don't make it a separate task — just confirm it's in the deck.</div>
+                    </div>
+                </td>
+                <td><span class="effort effort-s">S</span></td>
+                <td>Fri 29 (in deck)</td>
+                <td>
+                    <span class="req-link">R2.5</span>
+                </td>
+                <td><span class="status status-todo">To do</span></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ============ RISKS ============ -->
+<section class="section">
+    <div class="section-header">
+        Risks &amp; mitigations
+        <span class="count">5 to watch</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Risk</th>
+                <th>Likelihood</th>
+                <th>Mitigation</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <strong>Audience expects to see multi-agent routing in action</strong><br>
+                    <span class="task-detail">Only 1 agent + 1 supervisor can be provisioned. Skills-based routing demos usually rely on showing the same call landing on different agents based on skill — that's not possible here.</span>
+                </td>
+                <td><span class="effort effort-l">High</span></td>
+                <td>Lead with the <strong>config walkthrough</strong> (skill definitions → profiles → queue settings → flow canvas) before placing the call. Frame it as: "In production this routes across 50 agents in 5 skill tiers; today you'll see the rules engine drive the call to the matching eligible agent." Pre-record 60s clips for bilingual differentiation and Best-vs-Longest Available comparison. Use the supervisor as the "second agent" for escalation transfer demo.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Live spine not ready for Thu 28 internal review</strong><br>
+                    <span class="task-detail">If T1–T6 + C1/C2 slip past Tue 26 EOD, Wed 27 buffer evaporates and Thursday's review becomes a slide walkthrough instead of a working demo — team can't give useful feedback on what they can't see.</span>
+                </td>
+                <td><span class="effort effort-m">Med</span></td>
+                <td>Treat Tue 26 EOD as a hard milestone. Wed 27 is buffer/smoke-test. If something is still broken, run Thu 28 review with the video fallback already in place — the rest of the spine still demonstrates end-to-end. Better to show 8 of 9 working than postpone the review.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Salesforce MCP doesn't connect in time</strong><br>
+                    <span class="task-detail">T2 is the largest single-task risk — auth, network, or MCP server issues could eat 2 days.</span>
+                </td>
+                <td><span class="effort effort-m">Med</span></td>
+                <td>Spike on Mon 25 morning. If not working by Tue 26 EOD, record a 60-second video of the SF lookup on a dev account and play it during the demo with verbal narration. Audience still sees the capability; you don't burn 2 more days fighting auth.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>JDS write nodes don't fire reliably</strong><br>
+                    <span class="task-detail">T3 + T6 + T8 all depend on JDS append working. If they don't, journey continuity (R1.3), compliance logging (R2.4), and the repeat-reason flow all weaken.</span>
+                </td>
+                <td><span class="effort effort-m">Med</span></td>
+                <td>Pre-stage the Sarah Smith record manually in JDS via API before demo if Flow Designer writes are flaky. The customer doesn't know whether it was real-time vs pre-seeded.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>Internal review feedback requires meaningful changes</strong><br>
+                    <span class="task-detail">If the team asks for new flows, new use cases, or rework on Thu 28, Fri gets eaten before the deck is done.</span>
+                </td>
+                <td><span class="effort effort-m">Med</span></td>
+                <td>Frame the review as "feedback on what's here," not "what else should we add." Set a Fri 29 noon cutoff for accepting changes — anything after that goes on a "v2 post-demo" list. Protect Sat 30 for dry-run.</td>
+            </tr>
+            <tr>
+                <td>
+                    <strong>You run out of time on the deck (T11)</strong><br>
+                    <span class="task-detail">Tech build (T1-T6) routinely overruns; deck gets squeezed.</span>
+                </td>
+                <td><span class="effort effort-l">High</span></td>
+                <td>Hard cut over to deck work by Thu 28 afternoon regardless of T1-T6 state. A working live demo + lean deck beats a broken live demo + polished deck. Use MARP from existing demo-outline-v2 content to save hours.</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- ============ ITEMS YOU MAY HAVE MISSED ============ -->
+<section class="section">
+    <div class="section-header">
+        Items you may have missed (suggested additions)
+        <span class="count">5 suggestions</span>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Suggestion</th>
+                <th>Why it matters</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>AI disclosure prompt at start of AI conversation</strong></td>
+                <td>Compliance row (R2.4) calls out disclosure separately from opt-out. Easy to forget — needs a single voice/chat prompt before AI starts.</td>
+            </tr>
+            <tr>
+                <td><strong>Pre-staged data: Sarah Smith record in CRM + JDS + a prior interaction</strong></td>
+                <td>T2 (SF lookup), T3 (JDS append), T6 (repeat-reason) all assume Sarah exists with data. Build the seed-data script once, run it before every dry-run and the live demo.</td>
+            </tr>
+            <tr>
+                <td><strong>Backup recording of the 90-second AI Agent walkthrough</strong></td>
+                <td>If the live tenant glitches during the most important moment, you need a 30-second recovery option. Record one good run earlier in the week.</td>
+            </tr>
+            <tr>
+                <td><strong>Customer-side web portal — verify chat + callback work</strong></td>
+                <td>The "site" half of the two-window staging is what makes journey continuity (R1.3) visible. Confirm chat opens, callback queues, and the same persona shows on both sides.</td>
+            </tr>
+            <tr>
+                <td><strong>"Disclaimer" slide for illustrative customer screens</strong></td>
+                <td>Per demo-outline-v2 — protects credibility when the customer clicks a stub on the web portal. 1 slide, 5 minutes of work, prevents one awkward moment.</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<footer>
+    Generated for Farmers WxCC Demo · Owner: Ed Villarreal · Demo: Mon Jun 1, 2026 · Source: agenda + demo-outline-v2-no-nice
+</footer>
+
+</div>
+
+</body>
+</html>
