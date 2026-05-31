@@ -422,6 +422,50 @@
       border-radius: 16px;
       background: var(--surface);
       box-shadow: var(--shadow-soft);
+      position: relative;
+      cursor: default;
+    }
+
+    .architecture-item .tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+      padding: 14px 16px;
+      background: var(--cisco-navy);
+      color: #e2e8f0;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(7, 24, 45, 0.25);
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .architecture-item .tooltip::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 7px solid transparent;
+      border-top-color: var(--cisco-navy);
+    }
+
+    .architecture-item .tooltip strong {
+      display: block;
+      color: var(--cisco-teal);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .architecture-item:hover .tooltip {
+      display: block;
     }
 
     .architecture-pill {
@@ -898,42 +942,49 @@
               <span class="architecture-pill">Core</span>
               <h3>Webex Contact Center</h3>
               <p>Interaction management across voice and digital journeys.</p>
+              <span class="tooltip"><strong>In the demo</strong>Skills-based routing with 8 skills, 5 queues, and skill relaxation. Flow Designer call flow with conditional branching. Agent Desktop handling Sarah's Monday callback. Supervisor real-time monitoring.</span>
             </article>
 
             <article class="architecture-item">
               <span class="architecture-pill">AI</span>
               <h3>Webex AI Agent</h3>
               <p>Autonomous and scripted customer engagement across self-service flows.</p>
+              <span class="tooltip"><strong>In the demo</strong>"Jessie" autonomously handles Sarah's Saturday-night vehicle addition — identity verification, policy update, and proof-of-insurance delivery in 90 seconds with no human agent involved.</span>
             </article>
 
             <article class="architecture-item">
               <span class="architecture-pill">Assist</span>
               <h3>Webex AI Assistant</h3>
               <p>Real-time assist for human agents during live conversations.</p>
+              <span class="tooltip"><strong>In the demo</strong>During Sarah's Monday callback, the human agent receives real-time suggested responses, conversation summaries, and knowledge article recommendations surfaced automatically as the call progresses.</span>
             </article>
 
             <article class="architecture-item">
               <span class="architecture-pill">Digital</span>
               <h3>Webex Connect</h3>
               <p>Digital channel orchestration, including SMS proof of coverage delivery.</p>
+              <span class="tooltip"><strong>In the demo</strong>After Jessie completes the vehicle addition Saturday night, Webex Connect delivers the proof-of-insurance document to Sarah's phone via SMS — closing the loop before the dealership deadline.</span>
             </article>
 
             <article class="architecture-item">
               <span class="architecture-pill">Context</span>
               <h3>Customer Journey Data Services / CJDS</h3>
               <p>Cross-channel context and continuity across autonomous and agent-led moments.</p>
+              <span class="tooltip"><strong>In the demo</strong>Saturday's AI interaction is written as a journey event. When Sarah calls back Monday, the agent sees her full history in the Customer Journey widget — no "can you repeat that?" moment.</span>
             </article>
 
             <article class="architecture-item">
               <span class="architecture-pill">Integration</span>
               <h3>Model Context Protocol / MCP</h3>
               <p>Back-end integration layer that connects the experience to customer systems.</p>
+              <span class="tooltip"><strong>In the demo</strong>MCP connects Jessie to back-end systems (policy database, vehicle registry) so the AI Agent can autonomously verify Sarah's identity and update her policy without hardcoded API logic.</span>
             </article>
 
             <article class="architecture-item">
               <span class="architecture-pill">Quality</span>
               <h3>Webex AI Quality Management</h3>
               <p>Automated evaluation, sentiment analysis, and coaching insights across 100% of interactions.</p>
+              <span class="tooltip"><strong>In the demo</strong>The Monday agent interaction is auto-scored post-call. Supervisor reviews the AI-generated evaluation, sentiment timeline, and coaching recommendations — no manual QA sampling required.</span>
             </article>
           </div>
         </div>
